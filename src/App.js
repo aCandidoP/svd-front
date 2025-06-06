@@ -1,8 +1,8 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useEffect, useState } from 'react';
 import './App.css';
-import Header from './components/header/header';
-import LoginForm from './components/login/';
+import Header from './components/header';
+import LoginForm from './components/login';
 
 function App() {
   // Token state to manage authentication
