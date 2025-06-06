@@ -1,16 +1,8 @@
 import { useState } from 'react';
-<<<<<<< HEAD:src/components/login/index.jsx
+import { Button, Col, Container, Form, Image, Row } from 'react-bootstrap';
 import { decodeJwt } from '../../helpers/decode';
-=======
-import Button from 'react-bootstrap/Button';
-import Col from 'react-bootstrap/Col';
-import Container from 'react-bootstrap/Container';
-import Form from 'react-bootstrap/Form';
-import Image from 'react-bootstrap/Image';
-import Row from 'react-bootstrap/Row';
->>>>>>> 05eb99b72c4632cfd084af5b446207ad2a2e77af:src/components/login/login.jsx
 
-function LoginForm() {
+function LoginForm(props) {
   const handleSubmit = async (event) => {
     console.log({ email, password });
     event.preventDefault();
@@ -25,18 +17,13 @@ function LoginForm() {
       }),
     });
     const data = await response.json();
-    localStorage.setItem('token', data.token)
+    localStorage.setItem('token', data.token);
+    props.setToken(data.token);
     console.log(data);
-<<<<<<< HEAD:src/components/login/index.jsx
-    decodeJwt()
-
-  }
-=======
+    decodeJwt();
   };
->>>>>>> 05eb99b72c4632cfd084af5b446207ad2a2e77af:src/components/login/login.jsx
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
 
   return (
     <Container fluid className="vh-100">
