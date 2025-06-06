@@ -1,6 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
-import LoginForm from './components/login/login';
+import LoginForm from './components/login/';
 import Header from './components/header/header';
 
 

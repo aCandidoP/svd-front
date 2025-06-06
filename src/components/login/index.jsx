@@ -6,6 +6,7 @@ import logo from '../img/logo.png';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import { useState } from 'react';
+import { decodeJwt } from '../../helpers/decode';
 
 function LoginForm() {
   const handleSubmit = async(event) => {
@@ -22,10 +23,14 @@ function LoginForm() {
       }),
     })
     const data = await response.json();
+    localStorage.setItem('token', data.token)
     console.log(data);
+    decodeJwt()
+
   }
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
 
   return (
     <Container fluid className="vh-100">
