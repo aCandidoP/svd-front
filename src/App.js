@@ -20,7 +20,7 @@ function App() {
 
   return (
     <>
-      <Header />
+      <Header token={token} />
       <LoginForm setToken={setToken} />
       {token}
     </>

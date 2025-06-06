@@ -3,9 +3,21 @@ import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 
+import { useEffect, useState } from 'react';
 import './header.css';
 
-function Header() {
+function Header(props) {
+  const [hasLoggedIn, setHasLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const storedToken = localStorage.getItem('token');
+    if (storedToken) {
+      setHasLoggedIn(true);
+    } else {
+      setHasLoggedIn(false);
+    }
+  }, []);
+
   return (
     <Navbar expand="lg" className="bg-body-tertiary d-flex">
       <Container className="justify-content-between">
@@ -17,20 +29,30 @@ function Header() {
             <Nav.Link href="#link">Consultar chamados</Nav.Link>
           </Nav>
           {/* só aparece se tiver logado */}
-          <NavDropdown title="Usuário" id="basic-nav-dropdown" className="">
-            <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
-            <NavDropdown.Item href="#action/3.2">
-              Another action
-            </NavDropdown.Item>
-            <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
-            <NavDropdown.Divider />
-            <NavDropdown.Item href="#action/3.4">
-              Separated link
-            </NavDropdown.Item>
-          </NavDropdown>
-          <Nav.Link href="#link" className="" style={{ marginLeft: '10px' }}>
-            Sair
-          </Nav.Link>
+          {hasLoggedIn && (
+            <>
+              <NavDropdown title="Usuário" id="basic-nav-dropdown" className="">
+                <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
+                <NavDropdown.Item href="#action/3.2">
+                  Another action
+                </NavDropdown.Item>
+                <NavDropdown.Item href="#action/3.3">
+                  Something
+                </NavDropdown.Item>
+                <NavDropdown.Divider />
+                <NavDropdown.Item href="#action/3.4">
+                  Separated link
+                </NavDropdown.Item>
+              </NavDropdown>
+              <Nav.Link
+                href="#link"
+                className=""
+                style={{ marginLeft: '10px' }}
+              >
+                Sair
+              </Nav.Link>
+            </>
+          )}
         </Navbar.Collapse>
       </Container>
     </Navbar>
