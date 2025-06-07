@@ -11,6 +11,7 @@ function Header(props) {
 
   useEffect(() => {
     const storedToken = localStorage.getItem('token');
+    // isso daqui tem brecha mas depois eu arrumo isso
     if (storedToken) {
       setHasLoggedIn(true);
     } else {
