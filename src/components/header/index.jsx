@@ -4,7 +4,7 @@ import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 
 import { useEffect, useState } from 'react';
-import './header.css';
+import './Header.css';
 
 function Header(props) {
   const [hasLoggedIn, setHasLoggedIn] = useState(false);

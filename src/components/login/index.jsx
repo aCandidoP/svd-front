@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Button, Col, Container, Form, Image, Row } from 'react-bootstrap';
 import { decodeJwt } from '../../helpers/decode';
 
+import './Login.css';
+
 function LoginForm(props) {
   const handleSubmit = async (event) => {
     console.log({ email, password });
