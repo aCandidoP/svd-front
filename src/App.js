@@ -1,13 +1,13 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import './App.css';
 import Header from './components/Header';
-import LoginForm from './components/Login';
+import { useAuth } from './contexts/AuthContext';
 import AppRouter from './routes/Router';
 
 function App() {
   // Token state to manage authentication
-  const [token, setToken] = useState(null);
+  const { login } = useAuth();
 
   useEffect(() => {
     const storedToken = localStorage.getItem('token');
@@ -15,15 +15,14 @@ function App() {
       // se storedToken igual a null então redirecionada para a rota de login
     }
     if (storedToken) {
-      setToken(storedToken);
+      login(storedToken);
     }
-  }, []);
+  }, [login]);
 
   return (
     <>
-      <Header token={token} />
-      <LoginForm setToken={setToken} />
-      {token}
+      <Header />
+      {/* <LoginForm setToken={setToken} /> */}
       <AppRouter />
     </>
   );

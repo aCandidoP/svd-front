@@ -1,31 +1,45 @@
 import { useState } from 'react';
 import { Button, Col, Container, Form, Image, Row } from 'react-bootstrap';
-import { decodeJwt } from '../../helpers/decode';
+// import { decodeJwt } from '../../helpers/decode';
 
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
 import './Login.css';
 
 function LoginForm(props) {
-  const handleSubmit = async (event) => {
-    console.log({ email, password });
-    event.preventDefault();
-    const response = await fetch('http://localhost:5000/auth', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        email: email,
-        senha: password,
-      }),
-    });
-    const data = await response.json();
-    localStorage.setItem('token', data.token);
-    props.setToken(data.token);
-    console.log(data);
-    decodeJwt();
-  };
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const { login } = useAuth();
+
+  const navigate = useNavigate();
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    console.log({ email, password });
+    // const response = await fetch('http://localhost:5000/auth', {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    //   body: JSON.stringify({
+    //     email: email,
+    //     senha: password,
+    //   }),
+    // });
+
+    /*
+     * Esse endpoint é só para fins de teste, o correto seria utilizar o que está comentado acima
+     * e o 'backend' mockado está rodando na porta 3000 .
+     */
+    const response = await fetch('http://localhost:3001/usuarios/1');
+    const data = await response.json();
+    localStorage.setItem('token', data.token);
+    login(data.token);
+    console.log(data);
+    // decodeJwt();
+    // redirect para home, mas pode ser redirecionado para listar chamados
+    navigate('/');
+  };
 
   return (
     <Container fluid className="vh-100">
