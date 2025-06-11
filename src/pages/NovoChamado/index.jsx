@@ -24,22 +24,33 @@ export default function NovoChamado() {
 
   useEffect(() => {
     async function getGetCategorias() {
-      const response = await fetch('http://localhost:3001/categorias');
-      if (!response.ok) {
-        throw new Error('Erro ao buscar categorias');
+      try {
+        const response = await fetch('http://localhost:3001/categorias');
+        if (!response.ok) {
+          throw new Error('Erro ao buscar categorias');
+        }
+        const data = await response.json();
+        setCategorias(data);
+      } catch (error) {
+        console.error(error);
       }
-      const data = await response.json();
-      setCategorias(data);
     }
     async function getUser() {
       console.log(token);
-      const response = await fetch(`http://localhost:3001/usuarios/${token}`);
-      if (!response.ok) {
-        throw new Error('Erro ao buscar usuário');
+      if (!token) {
+        throw new Error('Token não disponível, não buscando usuário');
       }
-      const data = await response.json();
-      setUser({ id: data.id, nome: data.nome, email: data.email });
-      console.log(data);
+      try {
+        const response = await fetch(`http://localhost:3001/usuarios/${token}`);
+        if (!response.ok) {
+          throw new Error('Erro ao buscar usuário');
+        }
+        const data = await response.json();
+        setUser({ id: data.id, nome: data.nome, email: data.email });
+        console.log(data);
+      } catch (error) {
+        console.error(error);
+      }
     }
     getUser();
     getGetCategorias();
@@ -54,7 +65,7 @@ export default function NovoChamado() {
       categoria: categoria,
       status: 'Aberto',
       descricao: descricao,
-      data_criacao: Date.now(),
+      data_criacao: new Date(),
       usuario_id: user.id,
       usuario: {
         id: user.id,
@@ -90,6 +101,7 @@ export default function NovoChamado() {
             <input
               type="text"
               className="form-control"
+              required
               id="titulo"
               placeholder="Digite o título do chamado"
               value={titulo}
@@ -102,6 +114,7 @@ export default function NovoChamado() {
             </label>
             <select
               className="form-select"
+              required
               id="tipoChamado"
               onChange={(e) => setTipoChamado(e.target.value)}
             >
@@ -119,6 +132,7 @@ export default function NovoChamado() {
             <select
               className="form-select"
               id="tipoServico"
+              required
               onChange={(e) => setCategoria(e.target.value)}
             >
               {categorias.map((categoria) => (
@@ -136,6 +150,7 @@ export default function NovoChamado() {
               className="form-control"
               id="descricao"
               rows="3"
+              required
               placeholder="Digite a descrição do chamado"
               value={descricao}
               onChange={(e) => setDescricao(e.target.value)}
