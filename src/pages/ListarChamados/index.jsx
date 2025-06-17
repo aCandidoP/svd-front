@@ -46,6 +46,7 @@ export default function ListarChamados() {
       }
     }
     console.log(perPage);
+    console.log(page);
   }, [perPage, page]);
 
   return (
