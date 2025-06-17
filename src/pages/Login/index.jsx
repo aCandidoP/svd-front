@@ -16,27 +16,27 @@ function LoginForm(props) {
   const handleSubmit = async (event) => {
     event.preventDefault();
     console.log({ email, password });
-    // const response = await fetch('http://localhost:5000/auth', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify({
-    //     email: email,
-    //     senha: password,
-    //   }),
-    // });
+    const response = await fetch('http://localhost:5000/auth', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: email,
+        senha: password,
+      }),
+    });
 
+    // TODO: Remover os mocks
     /*
      * Esse endpoint é só para fins de teste, o correto seria utilizar o que está comentado acima
-     * e o 'backend' mockado está rodando na porta 3000 .
+     * e o 'backend' mockado está rodando na porta 3001 .
      */
-    const response = await fetch('http://localhost:3001/usuarios/1');
+    // const response = await fetch('http://localhost:3001/usuarios/1');
     const data = await response.json();
     localStorage.setItem('token', data.token);
     login(data.token);
     console.log(data);
-    // decodeJwt();
     // redirect para home, mas pode ser redirecionado para listar chamados
     navigate('/');
   };
