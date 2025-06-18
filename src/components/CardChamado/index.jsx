@@ -1,6 +1,9 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 export default function CardChamado({ chamado, className }) {
+  const userEmail = useState(null);
+  useEffect(() => {}, []);
   return (
     <div className={`${className}`}>
       <div className="card">
@@ -19,8 +22,8 @@ export default function CardChamado({ chamado, className }) {
           <div className="d-flex justify-content-between">
             <div className="d-flex gap-2 align-items-center">
               <div className="d-flex flex-column">
-                <div>{chamado.usuario.nome}</div>
-                <div>{chamado.usuario.email}</div>
+                <div>{chamado.usuario_nome}</div>
+                {/* <div>{chamado.usuario.email}</div> */}
               </div>
               <div>{chamado.data_criacao}</div>
             </div>
