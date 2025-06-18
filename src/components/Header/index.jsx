@@ -6,6 +6,7 @@ import NavDropdown from 'react-bootstrap/NavDropdown';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { validTokenDecoded } from '../../helpers/decode';
 import './style.css';
 
 function Header(props) {
@@ -24,6 +25,13 @@ function Header(props) {
       setHasLoggedIn(false);
     }
   }, [token]);
+
+  useEffect(() => {
+    if (!validTokenDecoded()) {
+      setHasLoggedIn(false);
+      logout();
+    }
+  }, []);
 
   const handleLogout = () => {
     logout();
