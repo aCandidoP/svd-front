@@ -1,5 +1,4 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useCallback, useEffect, useState } from 'react';
 import CardChamado from '../../components/CardChamado';
 import Paginacao from '../../components/Paginacao';
 import { useAuth } from '../../contexts/AuthContext';
@@ -13,61 +12,47 @@ export default function ListarChamados() {
   // para validar depois
   const { token, logout } = useAuth();
 
-  const navegate = useNavigate();
+  // Retirado a possibilidade de recriação da função desnecessariamente
+  const getChamadosPaginados = useCallback(async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:5000/chamados/paginados?page=${page}&per_page=${perPage}`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-  useEffect(() => {
-    if (!validTokenDecoded(token)) {
-      logout();
-    }
-    async function fetchChamados() {
-      // primeiro fazer validação do token
-
-      const response = await fetch('http://localhost:5000/chamados', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
       const data = await response.json();
-      console.log(data);
-      setChamados(data);
+      // ver retorno correto da api
+      setChamados(data.chamados);
+      setPage(data.pagination_metadata.page);
+      setTotalPages(data.pagination_metadata.total_pages);
+    } catch (error) {
+      console.error(error);
     }
-
-    // fetchChamados();
-  }, []);
+  }, [perPage, page, token]);
 
   // Paginacao
   useEffect(() => {
+    let isMounted = true;
     if (!validTokenDecoded(token)) {
       logout();
-      navegate('/');
       return;
     }
-    // preparando para paginacao
-    async function fetchPaginated() {
-      try {
-        const response = await fetch(
-          `http://localhost:5000/chamados/paginados?page=${page}&per_page=${perPage}`,
-          {
-            method: 'GET',
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        const data = await response.json();
-        // ver retorno correto da api
-        setChamados(data.chamados);
-        setPage(data.pagination_metadata.page);
-        setTotalPages(data.pagination_metadata.total_pages);
-      } catch (error) {
-        console.error(error);
+    async function fetchData() {
+      if (isMounted) {
+        getChamadosPaginados();
       }
     }
-    // console.log(perPage);
-    // console.log(page);
-    fetchPaginated();
-  }, [perPage, page]);
+    fetchData();
+    // cleanup
+    return () => {
+      isMounted = false;
+    };
+  }, [getChamadosPaginados, token, logout]);
 
   return (
     <div className="container">
