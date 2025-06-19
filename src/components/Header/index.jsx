@@ -14,24 +14,14 @@ function Header(props) {
   const { token, logout } = useAuth();
 
   useEffect(() => {
-    /**
-     * TODO: fazer validação do token fazendo requisição para o backend
-     */
-    const storedToken = localStorage.getItem('token') === token ? token : null;
-    // isso daqui tem brecha mas depois eu arrumo isso
-    if (storedToken && storedToken !== 'null') {
-      setHasLoggedIn(true);
-    } else {
-      setHasLoggedIn(false);
-    }
-  }, [token]);
-
-  useEffect(() => {
-    if (!validTokenDecoded()) {
-      setHasLoggedIn(false);
+    const isTokenValid = token && token !== null && validTokenDecoded(token);
+    const storedToken = localStorage.getItem('token');
+    const isLoggedIn = storedToken && storedToken === token && isTokenValid;
+    setHasLoggedIn(isLoggedIn);
+    if (!isTokenValid && storedToken) {
       logout();
     }
-  }, []);
+  }, [token, logout]);
 
   const handleLogout = () => {
     logout();
