@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-import { redirect } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const AuthContext = createContext();
 
@@ -7,6 +7,9 @@ export function AuthProvider({ children }) {
   const [token, setToken] = useState(
     () => localStorage.getItem('token') || null
   );
+
+  // Trocando para navigate no lugar do redirect
+  const navigate = useNavigate();
 
   useEffect(() => {
     const storedToken = localStorage.getItem('token');
@@ -23,7 +26,8 @@ export function AuthProvider({ children }) {
   const logout = () => {
     localStorage.removeItem('token');
     setToken(null);
-    redirect('/');
+    // Trocando para navigate no lugar do redirect
+    navigate('/');
   };
 
   return (
