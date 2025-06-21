@@ -1,19 +1,21 @@
 import { useCallback, useEffect, useState } from 'react';
-import { redirect } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { getUserIdJwt, validTokenDecoded } from '../../helpers/decode';
 
 export default function NovoChamado() {
   const [titulo, setTitulo] = useState('');
   const [categorias, setCategorias] = useState([]);
-  const [categoria, setCategoria] = useState('');
+  const [categoria, setCategoria] = useState();
   const [tiposChamado, setTiposChamado] = useState([]);
-  const [tipoChamado, setTipoChamado] = useState('');
+  const [tipoChamado, setTipoChamado] = useState();
   const [descricao, setDescricao] = useState('');
 
   const [user, setUser] = useState();
 
   const { token } = useAuth();
+
+  const navigate = useNavigate();
 
   // Retirado a possibilidade de recriação da função desnecessariamente
   const getCategorias = useCallback(async () => {
@@ -28,6 +30,10 @@ export default function NovoChamado() {
       }
       const data = await response.json();
       setCategorias(data);
+
+      if (data.length > 0) {
+        setCategoria(data[0]);
+      }
     } catch (error) {
       console.error(error);
     }
@@ -44,8 +50,11 @@ export default function NovoChamado() {
         throw new Error('Erro ao buscar tipos');
       }
       const data = await response.json();
-      console.log(data);
       setTiposChamado(data);
+
+      if (data.length > 0) {
+        setTipoChamado(data[0]);
+      }
     } catch (error) {
       console.error(error);
     }
@@ -70,7 +79,6 @@ export default function NovoChamado() {
       // por enquanto até andre arrumar essa resposta bizarra
       const teste = JSON.parse(data.replace(/'/g, '"'));
       setUser({ id: teste[0].id, nome: teste[0].nome, email: teste[0].email });
-      console.log(teste[0]);
     } catch (error) {
       console.error(error);
     }
@@ -97,8 +105,8 @@ export default function NovoChamado() {
     try {
       const novoChamado = {
         titulo: titulo,
-        tipo_id: 1,
-        categoria_id: 1,
+        tipo_id: tipoChamado.id,
+        categoria_id: categoria.id,
         descricao: descricao,
         usuario_id: user.id,
       };
@@ -110,12 +118,27 @@ export default function NovoChamado() {
         },
         body: JSON.stringify(novoChamado),
       });
+      const { chamado_id } = await response.json();
       if (!response.ok) throw Error('Erro ao criar o novo chamado');
-      alert(`Chamado ${novoChamado.id} criado com sucesso!`);
-      redirect('/');
+      alert(`Chamado ${chamado_id} criado com sucesso!`);
+      navigate('/');
     } catch (err) {
       console.error(err);
     }
+  }
+
+  function handleChangeCategoria(e) {
+    const categoriaId = parseInt(e.target.value);
+    const categoriaSelecionada = categorias.find(
+      (categoria) => categoria.id === categoriaId
+    );
+    setCategoria(categoriaSelecionada);
+  }
+
+  function handleChangeTipo(e) {
+    const tipoId = parseInt(e.target.value);
+    const tipoSelecionado = tiposChamado.find((tipo) => tipo.id === tipoId);
+    setTipoChamado(tipoSelecionado);
   }
 
   return (
@@ -145,10 +168,10 @@ export default function NovoChamado() {
               className="form-select"
               required
               id="tipoChamado"
-              onChange={(e) => setTipoChamado(e.target.value)}
+              onChange={(e) => handleChangeTipo(e)}
             >
               {tiposChamado.map((tipo) => (
-                <option key={tipo.id} value={tipo.desc_tipo}>
+                <option key={tipo.id} value={tipo.id}>
                   {tipo.desc_tipo}
                 </option>
               ))}
@@ -162,10 +185,10 @@ export default function NovoChamado() {
               className="form-select"
               id="tipoServico"
               required
-              onChange={(e) => setCategoria(e.target.value)}
+              onChange={(e) => handleChangeCategoria(e)}
             >
               {categorias.map((categoria) => (
-                <option key={categoria.id} value={categoria.nome}>
+                <option key={categoria.id} value={categoria.id}>
                   {categoria.nome}
                 </option>
               ))}
