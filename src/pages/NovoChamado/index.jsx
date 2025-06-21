@@ -1,83 +1,112 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { redirect } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { getUserIdJwt, validTokenDecoded } from '../../helpers/decode';
 
 export default function NovoChamado() {
-  const tiposServico = [
-    'Manutenção',
-    'Dúvida',
-    'Solicitação',
-    'Reclamação',
-    'Sugestão',
-    'Outros',
-  ];
-
   const [titulo, setTitulo] = useState('');
   const [categorias, setCategorias] = useState([]);
   const [categoria, setCategoria] = useState('');
+  const [tiposChamado, setTiposChamado] = useState([]);
   const [tipoChamado, setTipoChamado] = useState('');
   const [descricao, setDescricao] = useState('');
 
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState();
 
   const { token } = useAuth();
 
+  // Retirado a possibilidade de recriação da função desnecessariamente
+  const getCategorias = useCallback(async () => {
+    try {
+      const response = await fetch('http://localhost:5000/categorias', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error('Erro ao buscar categorias');
+      }
+      const data = await response.json();
+      setCategorias(data);
+    } catch (error) {
+      console.error(error);
+    }
+  }, [token]);
+
+  const getTipos = useCallback(async () => {
+    try {
+      const response = await fetch('http://localhost:5000/tipos', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error('Erro ao buscar tipos');
+      }
+      const data = await response.json();
+      console.log(data);
+      setTiposChamado(data);
+    } catch (error) {
+      console.error(error);
+    }
+  }, [token]);
+
+  // Retirado a possibilidade de recriação da função desnecessariamente
+  const getUser = useCallback(async () => {
+    if (!validTokenDecoded(token)) {
+      throw new Error('Token inválido');
+    }
+    try {
+      const userId = getUserIdJwt(token);
+      const response = await fetch(`http://localhost:5000/usuarios/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error('Erro ao buscar usuário');
+      }
+      const data = await response.json();
+      // por enquanto até andre arrumar essa resposta bizarra
+      const teste = JSON.parse(data.replace(/'/g, '"'));
+      setUser({ id: teste[0].id, nome: teste[0].nome, email: teste[0].email });
+      console.log(teste[0]);
+    } catch (error) {
+      console.error(error);
+    }
+    // adicionado a dependência
+  }, [token]);
+
   useEffect(() => {
-    async function getGetCategorias() {
-      try {
-        const response = await fetch('http://localhost:3001/categorias');
-        if (!response.ok) {
-          throw new Error('Erro ao buscar categorias');
-        }
-        const data = await response.json();
-        setCategorias(data);
-      } catch (error) {
-        console.error(error);
+    let isMounted = true;
+    const fetchData = async () => {
+      if (isMounted) {
+        await getUser();
+        await getCategorias();
+        await getTipos();
       }
-    }
-    async function getUser() {
-      console.log(token);
-      if (!token) {
-        throw new Error('Token não disponível, não buscando usuário');
-      }
-      try {
-        const response = await fetch(`http://localhost:3001/usuarios/${token}`);
-        if (!response.ok) {
-          throw new Error('Erro ao buscar usuário');
-        }
-        const data = await response.json();
-        setUser({ id: data.id, nome: data.nome, email: data.email });
-        console.log(data);
-      } catch (error) {
-        console.error(error);
-      }
-    }
-    getUser();
-    getGetCategorias();
-  }, []);
+    };
+    fetchData();
+    return () => {
+      isMounted = false;
+    };
+  }, [getUser, getCategorias, getTipos]);
 
   async function handleSubmit(e) {
     e.preventDefault();
-    console.log(tipoChamado);
-    const novoChamado = {
-      titulo: titulo,
-      tipo: tipoChamado,
-      categoria: categoria,
-      status: 'Aberto',
-      descricao: descricao,
-      data_criacao: new Date(),
-      usuario_id: user.id,
-      usuario: {
-        id: user.id,
-        nome: user.nome,
-        email: user.email,
-      },
-    };
     try {
-      const response = await fetch('http://localhost:3001/chamados', {
+      const novoChamado = {
+        titulo: titulo,
+        tipo_id: 1,
+        categoria_id: 1,
+        descricao: descricao,
+        usuario_id: user.id,
+      };
+      const response = await fetch('http://localhost:5000/chamados', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(novoChamado),
       });
@@ -118,9 +147,9 @@ export default function NovoChamado() {
               id="tipoChamado"
               onChange={(e) => setTipoChamado(e.target.value)}
             >
-              {tiposServico.map((servico, index) => (
-                <option key={index} value={servico}>
-                  {servico}
+              {tiposChamado.map((tipo) => (
+                <option key={tipo.id} value={tipo.desc_tipo}>
+                  {tipo.desc_tipo}
                 </option>
               ))}
             </select>
