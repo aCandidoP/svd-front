@@ -5,8 +5,8 @@ function decodeJwt(token) {
   return decoded_token;
 }
 
-export function getUserIdJwt() {
-  return JSON.parse(decodeJwt().sub).id;
+export function getUserIdJwt(token) {
+  return JSON.parse(decodeJwt(token).sub).id;
 }
 
 export function validTokenDecoded(token) {
