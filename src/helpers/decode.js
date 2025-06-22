@@ -15,6 +15,7 @@ export function validTokenDecoded(token) {
   try {
     const decoded = jwtDecode(token);
     if (decoded.exp && Date.now() >= decoded.exp * 1000) {
+      alert('Token expirado!');
       return false;
     }
     return true;
