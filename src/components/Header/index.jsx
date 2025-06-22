@@ -3,25 +3,51 @@ import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { validTokenDecoded } from '../../helpers/decode';
+import { getUserIdJwt, validTokenDecoded } from '../../helpers/decode';
 import './style.css';
 
 function Header(props) {
   const [hasLoggedIn, setHasLoggedIn] = useState(false);
+  const [user, setUser] = useState({});
   const { token, logout } = useAuth();
+
+  const getUser = useCallback(async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:5000/usuarios/${getUserIdJwt(token)}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const data = await response.json();
+      // TODO: depois que andre corrigir retirar isso daqui
+      const teste = JSON.parse(data.replace(/'/g, '"'));
+      setUser({ id: teste[0].id, nome: teste[0].nome, email: teste[0].email });
+    } catch (error) {
+      console.error('Erro ao buscar usuário:', error);
+    }
+  }, [token]);
 
   useEffect(() => {
     const isTokenValid = token && token !== null && validTokenDecoded(token);
     const storedToken = localStorage.getItem('token');
     const isLoggedIn = storedToken && storedToken === token && isTokenValid;
+    const fetchUser = async () => {
+      await getUser();
+    };
     setHasLoggedIn(isLoggedIn);
+    if (isLoggedIn) {
+      fetchUser();
+    }
     if (!isTokenValid && storedToken) {
       logout();
     }
-  }, [token, logout]);
+  }, [token, logout, getUser]);
 
   const handleLogout = () => {
     logout();
@@ -46,7 +72,11 @@ function Header(props) {
                   Consultar chamados
                 </Link>
               </Nav>
-              <NavDropdown title="Usuário" id="basic-nav-dropdown" className="">
+              <NavDropdown
+                title={user.email}
+                id="basic-nav-dropdown"
+                className=""
+              >
                 <Link to="/perfil" className="dropdown-item">
                   Perfil
                 </Link>
