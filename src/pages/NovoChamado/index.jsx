@@ -63,7 +63,8 @@ export default function NovoChamado() {
   // Retirado a possibilidade de recriação da função desnecessariamente
   const getUser = useCallback(async () => {
     if (!validTokenDecoded(token)) {
-      throw new Error('Token inválido');
+      return;
+      // throw new Error('Token inválido');
     }
     try {
       const userId = getUserIdJwt(token);
