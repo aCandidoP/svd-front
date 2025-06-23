@@ -25,9 +25,7 @@ function Header(props) {
         }
       );
       const data = await response.json();
-      // TODO: depois que andre corrigir retirar isso daqui
-      const teste = JSON.parse(data.replace(/'/g, '"'));
-      setUser({ id: teste[0].id, nome: teste[0].nome, email: teste[0].email });
+      setUser(data);
     } catch (error) {
       console.error('Erro ao buscar usuário:', error);
     }
@@ -58,7 +56,12 @@ function Header(props) {
     <Navbar expand="lg" className="bg-body-tertiary d-flex">
       <Container className="justify-content-between">
         <Link to="/" className="navbar-brand">
-          idoo
+          {/* idoo */}
+          <img
+            src="/logo-s-fundo.svg"
+            alt=""
+            style={{ width: '40px', height: '40px' }}
+          />
         </Link>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">

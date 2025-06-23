@@ -77,9 +77,7 @@ export default function NovoChamado() {
         throw new Error('Erro ao buscar usuário');
       }
       const data = await response.json();
-      // por enquanto até andre arrumar essa resposta bizarra
-      const teste = JSON.parse(data.replace(/'/g, '"'));
-      setUser({ id: teste[0].id, nome: teste[0].nome, email: teste[0].email });
+      setUser(data);
     } catch (error) {
       console.error(error);
     }
