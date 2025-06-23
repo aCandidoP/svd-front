@@ -2,6 +2,7 @@ import DetalheChamados from '../pages/DetalheChamados';
 import Home from '../pages/Home';
 import ListarChamados from '../pages/ListarChamados';
 import Login from '../pages/Login';
+import NotFound from '../pages/NotFound';
 import NovoChamado from '../pages/NovoChamado';
 
 // Adicionar as rotas aqui
@@ -30,6 +31,11 @@ const routes = [
     path: '/login',
     element: <Login />,
     name: 'Login',
+  },
+  {
+    path: '*',
+    element: <NotFound />,
+    name: 'Not Found',
   },
 ];
 
