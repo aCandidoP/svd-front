@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
 import CardChamado from '../../components/CardChamado';
 import Paginacao from '../../components/Paginacao';
+import Spinner from '../../components/spinner';
 import { useAuth } from '../../contexts/AuthContext';
 import { validTokenDecoded } from '../../helpers/decode';
 
 export default function ListarChamados() {
+  const [loading, setLoading] = useState(false);
   const [chamados, setChamados] = useState([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(5);
@@ -15,6 +17,7 @@ export default function ListarChamados() {
   // Retirado a possibilidade de recriação da função desnecessariamente
   const getChamadosPaginados = useCallback(async () => {
     try {
+      setLoading(true);
       const response = await fetch(
         `http://localhost:5000/chamados/paginados?page=${page}&per_page=${perPage}`,
         {
@@ -32,6 +35,8 @@ export default function ListarChamados() {
       setTotalPages(data.pagination_metadata.total_pages);
     } catch (error) {
       console.error(error);
+    } finally {
+      setLoading(false);
     }
   }, [perPage, page, token]);
 
@@ -57,25 +62,31 @@ export default function ListarChamados() {
   return (
     <div className="container">
       <h1>Listar Chamados</h1>
-      {chamados.length > 0 ? (
-        <div className="container">
-          <ul>
-            {chamados.map((chamado) => (
-              <CardChamado
-                className="list-group-item mb-2"
-                key={chamado.id}
-                chamado={chamado}
-              />
-            ))}
-          </ul>
-          <Paginacao
-            setPerPage={setPerPage}
-            totalPages={totalPages}
-            setPage={setPage}
-          />
-        </div>
+      {loading ? (
+        <Spinner />
       ) : (
-        'Nenhum chamado encontrado.'
+        <>
+          {chamados.length > 0 ? (
+            <div className="container">
+              <ul>
+                {chamados.map((chamado) => (
+                  <CardChamado
+                    className="list-group-item mb-2"
+                    key={chamado.id}
+                    chamado={chamado}
+                  />
+                ))}
+              </ul>
+              <Paginacao
+                setPerPage={setPerPage}
+                totalPages={totalPages}
+                setPage={setPage}
+              />
+            </div>
+          ) : (
+            'Nenhum chamado encontrado.'
+          )}
+        </>
       )}
     </div>
   );
