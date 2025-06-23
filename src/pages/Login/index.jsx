@@ -8,6 +8,7 @@ import './Login.css';
 function LoginForm(props) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
   const { login } = useAuth();
 
   const navigate = useNavigate();
@@ -26,6 +27,10 @@ function LoginForm(props) {
         }),
       });
       const data = await response.json();
+      if (!response.ok) {
+        setError(data.erro);
+        return;
+      }
       localStorage.setItem('token', data.token);
       login(data.token);
       // redirect para home, mas pode ser redirecionado para listar chamados
@@ -78,6 +83,11 @@ function LoginForm(props) {
             >
               Login
             </Button>
+            {error && (
+              <div className="alert alert-danger mt-3" role="alert">
+                {error}
+              </div>
+            )}
           </Form>
         </Col>
       </Row>
