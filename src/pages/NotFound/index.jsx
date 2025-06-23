@@ -7,7 +7,7 @@ export default function NotFound() {
       style={{
         paddingTop: 'auto',
         paddingBottom: 'auto',
-        height: 'calc(100vh - 56px)',
+        height: 'calc(100vh - 66px)',
       }}
     >
       <h1>404. Página não encontrada</h1>
