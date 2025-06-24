@@ -1,15 +1,13 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import routes from './routes';
 
 function AppRouter() {
   return (
-    <BrowserRouter>
-      <Routes>
-        {routes.map((route, index) => (
-          <Route key={index} path={route.path} element={route.element} />
-        ))}
-      </Routes>
-    </BrowserRouter>
+    <Routes>
+      {routes.map((route, index) => (
+        <Route key={index} path={route.path} element={route.element} />
+      ))}
+    </Routes>
   );
 }
 

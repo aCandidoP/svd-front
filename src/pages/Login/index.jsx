@@ -1,31 +1,38 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Button, Col, Container, Form, Image, Row } from 'react-bootstrap';
-import { decodeJwt } from '../../helpers/decode';
 
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
 import './Login.css';
 
 function LoginForm(props) {
-  const handleSubmit = async (event) => {
-    console.log({ email, password });
-    event.preventDefault();
-    const response = await fetch('http://localhost:5000/auth', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        email: email,
-        senha: password,
-      }),
-    });
-    const data = await response.json();
-    localStorage.setItem('token', data.token);
-    props.setToken(data.token);
-    console.log(data);
-    decodeJwt();
-  };
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const { login } = useAuth();
+
+  const navigate = useNavigate();
+
+  const handleSubmit = useCallback(
+    async (event) => {
+      event.preventDefault();
+      const response = await fetch('http://localhost:5000/auth', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: email,
+          senha: password,
+        }),
+      });
+      const data = await response.json();
+      localStorage.setItem('token', data.token);
+      login(data.token);
+      // redirect para home, mas pode ser redirecionado para listar chamados
+      navigate('/');
+    },
+    [email, password, login, navigate]
+  );
 
   return (
     <Container fluid className="vh-100">
