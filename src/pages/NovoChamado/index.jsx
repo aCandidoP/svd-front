@@ -105,9 +105,10 @@ export default function NovoChamado() {
       const novoChamado = {
         titulo: titulo,
         tipo_id: tipoChamado.id,
-        categoria_id: categoria.nome,
+        categoria_id: categoria.id,
         descricao: descricao,
         usuario_id: user.id,
+        organizacao_id: user.organizacao_id,
       };
       const response = await fetch('http://localhost:5000/chamados', {
         method: 'POST',
