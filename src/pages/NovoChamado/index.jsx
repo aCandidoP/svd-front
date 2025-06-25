@@ -105,7 +105,7 @@ export default function NovoChamado() {
       const novoChamado = {
         titulo: titulo,
         tipo_id: tipoChamado.id,
-        categoria_id: categoria.id,
+        categoria_id: categoria.nome,
         descricao: descricao,
         usuario_id: user.id,
       };
