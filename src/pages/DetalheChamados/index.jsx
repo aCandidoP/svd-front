@@ -104,6 +104,45 @@ export default function DetalheChamados() {
     }
   }
 
+  function handleCancel() {
+    setComentario('');
+  }
+
+  async function handleChangeStatus() {
+    try {
+      const novoStatus =
+        chamado.status === 'NOVO'
+          ? 'EM_ANDAMENTO'
+          : chamado.status === 'EM_ANDAMENTO'
+          ? 'FECHADO'
+          : 'EM_ANDAMENTO';
+      const response = await fetch(
+        `http://localhost:5000/chamados/${chamado.id}/status`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            status: novoStatus,
+          }),
+        }
+      );
+      console.log(response);
+      if (!response.ok) {
+        throw new Error('Erro ao alterar status do chamado');
+      }
+      const data = await response.json();
+      setChamado((prevChamado) => ({
+        ...prevChamado,
+        status: novoStatus,
+      }));
+    } catch (error) {
+      console.error('Erro ao alterar status do chamado:', error);
+    }
+  }
+
   return (
     <div className="container mt-3 border p-3">
       {/* titulo e status */}
@@ -116,9 +155,37 @@ export default function DetalheChamados() {
       </div>
 
       {/* id chamado e descricao do tipo */}
-      <div className="text-secondary">
-        <span>{chamado.id}</span>
-        <span> | {chamado.tipo?.desc_tipo}</span>
+      <div className="d-flex justify-content-between align-items-center mb-3">
+        <div className="text-secondary">
+          <span>{chamado.id}</span>
+          <span> | {chamado.tipo?.desc_tipo}</span>
+        </div>
+        {user.perfil_id === 1 && (
+          <div>
+            {chamado.status === 'NOVO' ? (
+              <button
+                className="btn btn-primary"
+                onClick={() => handleChangeStatus()}
+              >
+                Iniciar atendimento
+              </button>
+            ) : chamado.status === 'EM_ANDAMENTO' ? (
+              <button
+                className="btn btn-danger"
+                onClick={() => handleChangeStatus()}
+              >
+                Finalizar atendimento
+              </button>
+            ) : (
+              <button
+                className="btn btn-secondary"
+                onClick={() => handleChangeStatus()}
+              >
+                Reabrir chamado
+              </button>
+            )}
+          </div>
+        )}
       </div>
 
       {/* descricao do chamado */}
@@ -146,7 +213,7 @@ export default function DetalheChamados() {
           </div>
           <div>
             <span>Ultima atualização</span>
-            <div>{chamado.data_atualizacao}</div>
+            <div>{chamado.ultima_atualizacao}</div>
           </div>
         </div>
       </div>
@@ -176,10 +243,13 @@ export default function DetalheChamados() {
           className="form-control"
           value={comentario}
           onChange={(e) => setComentario(e.target.value)}
+          disabled={chamado.status === 'FECHADO'}
         ></textarea>
       </div>
       <div className="d-flex justify-content-end mt-2">
-        <button className="btn btn-light">Cancelar</button>
+        <button className="btn btn-light" onClick={() => handleCancel()}>
+          Cancelar
+        </button>
         <button
           className="btn btn-secondary"
           onClick={() => handleCommentSubmit()}
