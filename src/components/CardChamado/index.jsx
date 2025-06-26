@@ -29,9 +29,9 @@ export default function CardChamado({ chamado, className }) {
             </div>
             {/* botoes */}
             <div className="d-flex gap-2">
-              <Link to={`/comentar-chamado/${chamado.id}`}>
+              {/* <Link to={`/comentar-chamado/${chamado.id}`}>
                 <button className="btn btn-primary">Comentar</button>
-              </Link>
+              </Link> */}
               <Link to={`/detalhes-chamado/${chamado.id}`}>
                 <button className="btn btn-secondary">Ver detalhes</button>
               </Link>
