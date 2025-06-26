@@ -10,8 +10,8 @@ export default function CardChamado({ chamado, className }) {
         <div className="card-body">
           <div className="d-flex justify-content-between">
             <div className="d-flex flex-col gap-2">
-              <div>{chamado.desc_tipo}</div>
-              <div>{chamado.categoria_nome}</div>
+              <div>{chamado.tipo.desc_tipo}</div>
+              <div>{chamado.categoria.nome}</div>
             </div>
             <div>
               <div>{chamado.status}</div>
