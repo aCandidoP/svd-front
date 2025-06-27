@@ -1,9 +1,12 @@
+import { isAdminJwt } from '../helpers/decode';
 import DetalheChamados from '../pages/DetalheChamados';
 import Home from '../pages/Home';
 import ListarChamados from '../pages/ListarChamados';
 import Login from '../pages/Login';
 import NotFound from '../pages/NotFound';
 import NovoChamado from '../pages/NovoChamado';
+import Registrar from '../pages/Registrar';
+import RotaProtegida from './RotaProtegida';
 
 // Adicionar as rotas aqui
 const routes = [
@@ -31,6 +34,15 @@ const routes = [
     path: '/login',
     element: <Login />,
     name: 'Login',
+  },
+  {
+    path: '/registrar',
+    element: (
+      <RotaProtegida isAdmin={isAdminJwt(localStorage.getItem('token'))}>
+        <Registrar />
+      </RotaProtegida>
+    ),
+    name: 'Registrar',
   },
   {
     path: '*',
