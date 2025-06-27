@@ -22,7 +22,7 @@ function Home() {
         <DashboardChamados />
       ) : (
         <div className="text-center mt-5">
-          <h1>Bem-vindo ao sistema de chamados</h1>
+          <h1>Bem-vindo ao sistema de gerenciamento de chamados</h1>
           <p>Por favor, faça login para acessar seus chamados.</p>
         </div>
       )}
