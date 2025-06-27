@@ -80,6 +80,11 @@ function Header(props) {
                 id="basic-nav-dropdown"
                 className=""
               >
+                {user.perfil_id === 1 && (
+                  <Link to="/registrar" className="dropdown-item">
+                    Registrar
+                  </Link>
+                )}
                 <Link to="/perfil" className="dropdown-item">
                   Perfil
                 </Link>
@@ -104,9 +109,6 @@ function Header(props) {
             <Nav className="me-auto d-flex ms-auto">
               <Link to="/login" className="nav-link">
                 Entrar
-              </Link>
-              <Link to="/registrar" className="nav-link">
-                Registrar
               </Link>
             </Nav>
           )}
