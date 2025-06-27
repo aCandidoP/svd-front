@@ -9,6 +9,11 @@ export function getUserIdJwt(token) {
   return JSON.parse(decodeJwt(token).sub).id;
 }
 
+export function isAdminJwt(token) {
+  const decoded = JSON.parse(decodeJwt(token).sub);
+  return decoded.perfil_id === '1';
+}
+
 export function validTokenDecoded(token) {
   if (!token) return false;
 
