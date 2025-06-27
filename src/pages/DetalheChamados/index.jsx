@@ -112,10 +112,10 @@ export default function DetalheChamados() {
     try {
       const novoStatus =
         chamado.status === 'NOVO'
-          ? 'EM_ANDAMENTO'
-          : chamado.status === 'EM_ANDAMENTO'
+          ? 'EM_ATENDIMENTO'
+          : chamado.status === 'EM_ATENDIMENTO'
           ? 'FECHADO'
-          : 'EM_ANDAMENTO';
+          : 'EM_ATENDIMENTO';
       const response = await fetch(
         `http://localhost:5000/chamados/${chamado.id}/status`,
         {
@@ -146,10 +146,11 @@ export default function DetalheChamados() {
   return (
     <div className="container mt-3 border p-3">
       {/* titulo e status */}
+      <span className="">Id do Chamado: {chamado.id}</span>
       <div className="d-flex justify-content-between">
         <div className="d-flex gap-1 align-items-center">
           <h3>{chamado.titulo}</h3>
-          <i className="bi bi-clock"></i>
+          <i className="bi bi-clock me-2"></i>
         </div>
         <span>{chamado.status}</span>
       </div>
@@ -157,8 +158,8 @@ export default function DetalheChamados() {
       {/* id chamado e descricao do tipo */}
       <div className="d-flex justify-content-between align-items-center mb-3">
         <div className="text-secondary">
-          <span>{chamado.id}</span>
-          <span> | {chamado.tipo?.desc_tipo}</span>
+          <span>{chamado.tipo?.desc_tipo}</span>
+          <span> | {chamado.categoria?.nome}</span>
         </div>
         {user.perfil_id === 1 && (
           <div>
@@ -169,7 +170,7 @@ export default function DetalheChamados() {
               >
                 Iniciar atendimento
               </button>
-            ) : chamado.status === 'EM_ANDAMENTO' ? (
+            ) : chamado.status === 'EM ATENDIMENTO' ? (
               <button
                 className="btn btn-danger"
                 onClick={() => handleChangeStatus()}
@@ -197,22 +198,22 @@ export default function DetalheChamados() {
       {/* users e datas */}
       <div className="d-flex justify-content-between">
         <div>
-          <div>
-            <span>Solicitante</span>
+          <div className="mb-2">
+            <span className="fw-bold">Solicitante: </span>
             <div>{chamado.requerente?.nome}</div>
           </div>
           <div>
-            <span>Responsável</span>
+            <span className="fw-bold">Responsável: </span>
             <div>{chamado.responsavel?.nome || 'Não atribuído'}</div>
           </div>
         </div>
         <div>
-          <div>
-            <span>Data de Abertura</span>
+          <div className="mb-2">
+            <span className="fw-bold">Data de Abertura</span>
             <div>{chamado.data_criacao}</div>
           </div>
           <div>
-            <span>Ultima atualização</span>
+            <span className="fw-bold">Ultima atualização</span>
             <div>{chamado.ultima_atualizacao}</div>
           </div>
         </div>
